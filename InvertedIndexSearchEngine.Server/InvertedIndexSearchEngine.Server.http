@@ -1,0 +1,6 @@
+@InvertedIndexSearchEngine.Server_HostAddress = http://localhost:5107
+
+GET {{InvertedIndexSearchEngine.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

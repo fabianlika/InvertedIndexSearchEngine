@@ -1,0 +1,20 @@
+<div class="results-wrapper mt-4 w-100" style="max-width: 800px;">
+
+  <div *ngIf="results?.length" class="results-header mb-4">
+    <h3 class="results-count">Found {{ results.length }} results</h3>
+  </div>
+
+  <ng-container *ngFor="let doc of results; let i = index">
+    <div class="result-item p-4 mb-3 rounded">
+      <div class="result-header">
+        <h5 class="result-title mb-2 fw-semibold">{{ doc.title }}</h5>
+        <small class="result-score">Relevance: {{ (doc.score * 100).toFixed(1) }}%</small>
+      </div>
+      <p class="result-snippet mb-0" [innerHTML]="highlightQuery(doc.contentSnippet)"></p>
+    </div>
+  </ng-container>
+
+  <div *ngIf="results?.length === 0" class="text-center text-muted mt-5">
+    <p class="fs-5">No results found. Try different search terms.</p>
+  </div>
+</div>

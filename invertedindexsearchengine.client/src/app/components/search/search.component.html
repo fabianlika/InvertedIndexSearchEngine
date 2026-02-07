@@ -1,0 +1,30 @@
+<div class="search-container text-center w-100">
+
+  <!-- Title / Subtitle -->
+  <h1 class="search-title mb-4">Inverted Index Engine</h1>
+  <p class="search-subtitle mb-5">Type a word or phrase to find documents instantly</p>
+
+  <!-- Search Input -->
+  <div class="d-flex justify-content-center mb-4 flex-wrap gap-2">
+    <input type="text" [(ngModel)]="query"
+           class="form-control form-control-lg search-input shadow-sm"
+           placeholder="Search documents..." (keyup.enter)="search()">
+
+    <button class="btn btn-primary btn-lg search-btn shadow-sm px-4" (click)="search()">Search</button>
+  </div>
+
+  <!-- Search Results -->
+  <div *ngIf="results && results.length" class="results-container mt-4 w-100" style="max-width: 800px;">
+    <div *ngFor="let doc of results" class="result-item p-3 mb-3 rounded shadow-sm hover-lift">
+      <h5 class="result-title mb-1 fw-semibold">{{ doc.title }}</h5>
+      <p class="result-snippet mb-1" [innerHTML]="highlightQuery(doc.contentSnippet)"></p>
+      <small class="text-muted">Score: {{ doc.score }}</small>
+    </div>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="results && results.length === 0 && query" class="text-center text-muted mt-5">
+    No results found.
+  </div>
+
+</div>

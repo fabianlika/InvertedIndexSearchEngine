@@ -1,0 +1,175 @@
+<div class="upload-container">
+  <!-- Title / Subtitle -->
+  <h1 class="upload-title mb-3 text-center">Add New Document</h1>
+  <p class="upload-subtitle mb-5 text-center">Upload PDF, Word, or Text files to the search index</p>
+
+  <!-- Toggle between File Upload and Manual Entry -->
+  <div class="mode-toggle mb-5">
+    <button 
+      class="mode-btn" 
+      [class.active]="uploadMode === 'file'"
+      (click)="uploadMode = 'file'">
+      📁 Upload File
+    </button>
+    <button 
+      class="mode-btn" 
+      [class.active]="uploadMode === 'manual'"
+      (click)="uploadMode = 'manual'">
+      ✍️ Manual Entry
+    </button>
+  </div>
+
+  <!-- FILE UPLOAD MODE - STEP INDICATOR -->
+  <div *ngIf="uploadMode === 'file'" class="step-indicator mb-5">
+    <div class="step" [class.active]="fileUploadStep === 1" [class.completed]="fileUploadStep > 1">
+      <div class="step-number">1</div>
+      <div class="step-label">Select File</div>
+    </div>
+    <div class="step-line" [class.active]="fileUploadStep > 1"></div>
+    <div class="step" [class.active]="fileUploadStep === 2">
+      <div class="step-number">2</div>
+      <div class="step-label">Confirm & Upload</div>
+    </div>
+  </div>
+
+  <!-- FILE UPLOAD MODE - STEP 1: SELECT FILE -->
+  <div *ngIf="uploadMode === 'file' && fileUploadStep === 1" class="upload-mode-section">
+    <div 
+      class="drag-drop-area rounded-3"
+      [class.drag-over]="isDragOver"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)">
+      
+      <div class="drag-drop-content">
+        <div class="drag-drop-icon">📄</div>
+        <h5 class="drag-drop-title">Drag and drop your file here</h5>
+        <p class="drag-drop-text">or</p>
+        <label class="file-input-label">
+          Click to browse
+          <input 
+            type="file" 
+            hidden
+            accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+            (change)="onFileInputChange($event)">
+        </label>
+        <p class="drag-drop-formats">Supported: PDF, DOCX, TXT</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILE UPLOAD MODE - STEP 2: CONFIRM & UPLOAD -->
+  <div *ngIf="uploadMode === 'file' && fileUploadStep === 2" class="upload-mode-section">
+    <!-- File Info -->
+    <div class="file-info-box mb-4">
+      <div class="file-icon-large">✓</div>
+      <h5 class="file-name">{{ selectedFile?.name }}</h5>
+      <p class="file-size">{{ (selectedFile?.size! / 1024).toFixed(2) }} KB</p>
+      <button 
+        type="button" 
+        class="btn btn-change rounded-2 mt-3"
+        (click)="clearFile()">
+        🔄 Change File
+      </button>
+    </div>
+
+    <!-- Title input -->
+    <div class="form-group mb-4 w-100 d-flex justify-content-center">
+      <div style="width: 100%; max-width: 550px;">
+        <label for="title-file" class="form-label">Document Title (optional)</label>
+        <input 
+          type="text" 
+          id="title-file" 
+          [(ngModel)]="title" 
+          name="title"
+          class="form-control search-input px-4 py-3 w-100"
+          placeholder="Auto-filled from filename...">
+      </div>
+    </div>
+
+    <!-- Content preview for text files -->
+    <div *ngIf="content && uploadMode === 'file'" class="form-group mb-4 w-100 d-flex justify-content-center">
+      <div style="width: 100%; max-width: 550px;">
+        <label for="preview" class="form-label">Content Preview</label>
+        <textarea 
+          id="preview"
+          class="form-control search-input px-4 py-3 w-100"
+          rows="4" 
+          [(ngModel)]="content"
+          name="content"
+          placeholder="File content will appear here..."></textarea>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="d-flex justify-content-center gap-3 flex-wrap mt-5">
+      <button 
+        type="button" 
+        class="btn search-btn shadow-sm px-4" 
+        (click)="upload()"
+        [disabled]="isLoading">
+        <span *ngIf="!isLoading">Upload Document</span>
+        <span *ngIf="isLoading">⏳ Uploading...</span>
+      </button>
+      <button 
+        type="button" 
+        class="btn seed-btn shadow-sm px-4" 
+        (click)="seed()"
+        [disabled]="isLoading">
+        <span *ngIf="!isLoading">Seed Sample Data</span>
+        <span *ngIf="isLoading">⏳ Seeding...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MANUAL ENTRY MODE -->
+  <form *ngIf="uploadMode === 'manual'" (ngSubmit)="upload()" class="upload-form w-100 d-flex flex-column align-items-center mt-4">
+    <div class="form-group mb-4 w-100 d-flex justify-content-center">
+      <div style="width: 100%; max-width: 550px;">
+        <label for="title-manual" class="form-label">Document Title</label>
+        <input 
+          type="text" 
+          id="title-manual" 
+          [(ngModel)]="title" 
+          name="title"
+          class="form-control search-input px-4 py-3 w-100"
+          placeholder="Enter document title..." 
+          required>
+      </div>
+    </div>
+
+    <div class="form-group mb-4 w-100 d-flex justify-content-center">
+      <div style="width: 100%; max-width: 550px;">
+        <label for="content-manual" class="form-label">Content</label>
+        <textarea 
+          id="content-manual" 
+          [(ngModel)]="content" 
+          name="content"
+          class="form-control search-input px-4 py-3 w-100"
+          rows="8" 
+          placeholder="Enter document content..." 
+          required></textarea>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <button type="submit" class="btn search-btn shadow-sm px-4" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Upload Document</span>
+        <span *ngIf="isLoading">⏳ Uploading...</span>
+      </button>
+      <button type="button" class="btn seed-btn shadow-sm px-4" (click)="seed()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Seed Sample Data</span>
+        <span *ngIf="isLoading">⏳ Seeding...</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Status Message -->
+  <div *ngIf="message" class="mt-5 alert alert-status rounded-2" [ngClass]="{'alert-success': message.includes('✓'), 'alert-danger': message.includes('❌')}" style="max-width: 550px;">
+    <div class="alert-icon me-2">
+      <span *ngIf="message.includes('✓')">✓</span>
+      <span *ngIf="message.includes('❌')">✕</span>
+    </div>
+    <div class="alert-content">{{ message }}</div>
+  </div>
+</div>

@@ -1,12 +1,14 @@
-﻿using DbDocument = InvertedIndexSearchEngine.Server.Models.Document;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using InvertedIndexSearchEngine.Server.Models;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using System.Text;
 using System.Text.RegularExpressions;
+using DbDocument = InvertedIndexSearchEngine.Server.Models.Document;
+
 
 namespace InvertedIndexSearchEngine.Services
 {
@@ -138,5 +140,13 @@ namespace InvertedIndexSearchEngine.Services
 
             return string.Empty;
         }
+
+        public async Task<InvertedIndexSearchEngine.Server.Models.Document?> GetDocumentByIdAsync(int id)
+        {
+            return await _context.Documents
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.Id == id);
+        }
+
     }
 }

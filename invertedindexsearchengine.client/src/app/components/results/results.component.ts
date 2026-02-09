@@ -9,18 +9,29 @@ export class ResultsComponent {
   @Input() results: any[] = [];
   @Input() query: string = '';
 
-  highlightQuery(text: string): string {
-    if (!this.query) return text;
+  // The document currently being viewed in the modal
+  selectedDoc: any = null;
 
-    const terms = this.query.split(' ').filter(t => t.length > 0);
-    let highlighted = text;
-
-    terms.forEach(term => {
-      const regex = new RegExp(`(${term})`, 'gi');
-      highlighted = highlighted.replace(regex, '<span class="highlight">$1</span>');
-    });
-
-    return highlighted;
+  // Open the modal
+  openModal(doc: any) {
+    this.selectedDoc = doc;
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden'; 
   }
 
+  // Close the modal
+  closeModal() {
+    this.selectedDoc = null;
+    // Restore background scrolling
+    document.body.style.overflow = 'auto'; 
+  }
+
+  // Helper to highlight terms in the text
+  getHighlightedContent(text: string): string {
+    if (!this.query || !text) return text;
+    
+    // Simple logic to wrap query terms in <mark> tags
+    const pattern = new RegExp(`(${this.query})`, 'gi');
+    return text.replace(pattern, '<mark>$1</mark>');
+  }
 }

@@ -1,30 +1,105 @@
-<div class="search-container text-center w-100">
+<div class="d-flex flex-column align-items-center w-100 position-relative">
 
-  <!-- Title / Subtitle -->
-  <h1 class="search-title mb-4">Inverted Index Engine</h1>
-  <p class="search-subtitle mb-5">Type a word or phrase to find documents instantly</p>
+  <!-- Search Header -->
+  <div class="search-section w-100 text-center mt-5 mb-5" style="max-width: 720px; z-index: 2;">
+    <h1 class="display-5 fw-bold mb-3" style="color: #202124;">Document Search Engine</h1>
+    <p class="text-muted mb-4">Search indexed documents using intelligent ranking</p>
 
-  <!-- Search Input -->
-  <div class="d-flex justify-content-center mb-4 flex-wrap gap-2">
-    <input type="text" [(ngModel)]="query"
-           class="form-control form-control-lg search-input shadow-sm"
-           placeholder="Search documents..." (keyup.enter)="search()">
+    <!-- Search Input -->
+    <div class="google-search-bar shadow-sm">
+      <span class="search-icon ps-3 pe-2 text-muted">🔍</span>
 
-    <button class="btn btn-primary btn-lg search-btn shadow-sm px-4" (click)="search()">Search</button>
-  </div>
+      <input type="text" 
+             [(ngModel)]="query"
+             class="flex-grow-1 border-0 bg-transparent"
+             style="outline: none; font-size: 1.15rem;"
+             placeholder="Search research papers, articles, reports..."
+             (input)="onQueryChange()"
+             (keyup.enter)="search()">
+    </div>
 
-  <!-- Search Results -->
-  <div *ngIf="results && results.length" class="results-container mt-4 w-100" style="max-width: 800px;">
-    <div *ngFor="let doc of results" class="result-item p-3 mb-3 rounded shadow-sm hover-lift">
-      <h5 class="result-title mb-1 fw-semibold">{{ doc.title }}</h5>
-      <p class="result-snippet mb-1" [innerHTML]="highlightQuery(doc.contentSnippet)"></p>
-      <small class="text-muted">Score: {{ doc.score }}</small>
+    <!-- Search Button -->
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button class="btn btn-primary px-4 fw-semibold" (click)="search()">
+        Search Documents
+      </button>
     </div>
   </div>
 
-  <!-- No Results -->
-  <div *ngIf="results && results.length === 0 && query" class="text-center text-muted mt-5">
-    No results found.
+  <!-- Search Results -->
+  <div *ngIf="results && results.length" class="results-container w-100" style="max-width: 720px;">
+    
+    <p class="text-muted small mb-4">
+      {{ results.length }} matching documents found
+    </p>
+
+    <div *ngFor="let doc of results" 
+         class="result-card mb-4 p-3 rounded hover-shadow"
+         (click)="openModal(doc)">
+
+      <div class="result-url text-muted small mb-1">
+        Document ID › {{ doc.id || 'N/A' }}
+      </div>
+
+      <h3 class="result-title fw-semibold mb-1">{{ doc.title }}</h3>
+
+      <p class="result-snippet text-secondary"
+         [innerHTML]="highlightQuery(doc.contentSnippet)">
+      </p>
+
+      <span class="badge bg-light text-dark border mt-1">
+        Relevance Score: {{ (doc.score * 100) | number:'1.0-1' }}%
+      </span>
+    </div>
   </div>
 
+  <!-- No Results State -->
+  <div *ngIf="hasSearched && results.length === 0" class="text-center text-muted mt-5">
+    <p class="lead">
+      No matching documents found for <strong>"{{ query }}"</strong>
+    </p>
+    <small>Try broader keywords or different phrasing.</small>
+  </div>
+
+</div>
+
+<!-- Document Preview Modal -->
+<div *ngIf="selectedDoc" class="modal-backdrop" (click)="closeModal()">
+
+  <div class="modal-content shadow-lg rounded" (click)="$event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div class="modal-header d-flex justify-content-between align-items-start">
+      <div>
+        <h2 class="h5 fw-bold mb-1">{{ selectedDoc.title }}</h2>
+        <small class="text-muted">
+          Relevance Score: {{ (selectedDoc.score * 100) | number:'1.0-1' }}%
+        </small>
+      </div>
+
+      <button class="btn-close-custom fs-4" (click)="closeModal()">×</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+
+      <div *ngIf="selectedDoc.loading" class="text-center text-muted py-5">
+        Loading full document content...
+      </div>
+
+      <div *ngIf="!selectedDoc.loading"
+           class="document-text lh-lg"
+           [innerHTML]="highlightQuery(selectedDoc.content)">
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer d-flex justify-content-end">
+      <button class="btn btn-outline-primary rounded-pill px-4" (click)="closeModal()">
+        Close Preview
+      </button>
+    </div>
+
+  </div>
 </div>

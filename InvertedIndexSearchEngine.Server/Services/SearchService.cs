@@ -74,6 +74,7 @@ namespace InvertedIndexSearchEngine.Services
 
                 results.Add(new SearchResultDto
                 {
+                    Id = doc.Id,
                     Title = doc.Title,
                     ContentSnippet = snippet,
                     Score = Math.Round(score, 4)

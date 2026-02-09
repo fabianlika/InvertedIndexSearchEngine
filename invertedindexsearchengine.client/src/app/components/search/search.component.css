@@ -108,3 +108,157 @@
   background-color: #fff3a0;
   font-weight: 600;
 }
+
+
+/* --- 1. Search Bar Styling --- */
+.google-search-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #dfe1e5;
+  box-shadow: none;
+  border-radius: 24px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 584px;
+  height: 46px;
+  padding: 5px 8px 5px 14px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.google-search-bar:hover, 
+.google-search-bar:focus-within {
+  background-color: #fff;
+  box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+  border-color: rgba(223,225,229,0);
+}
+
+/* --- 2. Result List Styling --- */
+.results-container {
+  z-index: 1;
+  padding-bottom: 3rem;
+}
+
+.result-card {
+  padding: 1rem;
+  margin-left: -1rem; /* Negative margin to allow hover effect to expand */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.result-card:hover {
+  background-color: #f1f3f4;
+}
+
+.result-url {
+  font-size: 14px;
+  color: #202124;
+  margin-bottom: 2px;
+}
+
+.result-title {
+  color: #1a0dab;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.result-title:hover {
+  text-decoration: underline;
+}
+
+.result-snippet {
+  color: #4d5156;
+  font-size: 14px;
+  line-height: 1.58;
+  margin-bottom: 4px;
+}
+
+/* Helper for highlight spans */
+::ng-deep .highlight {
+  background-color: #fff9c4; /* Soft yellow */
+  color: #202124;
+  font-weight: bold;
+  padding: 0 2px;
+}
+
+
+/* --- 3. Modal Overlay Styling --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Dark dim */
+  backdrop-filter: blur(4px); /* Blur background */
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 800px;
+  height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #dadce0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+}
+
+.modal-body {
+  padding: 30px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: #fff;
+}
+
+.document-text {
+  font-family: 'Georgia', serif; /* Better reading font */
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.modal-footer {
+  padding: 12px 24px;
+  border-top: 1px solid #dadce0;
+  background-color: #f8f9fa;
+  text-align: right;
+}
+
+.btn-close-custom {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #5f6368;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

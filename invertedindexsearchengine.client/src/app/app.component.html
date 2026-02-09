@@ -1,26 +1,48 @@
 <div class="app-container d-flex flex-column min-vh-100">
 
-  <nav class="navbar navbar-expand-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg shadow-sm"
+       style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);">
+
     <div class="container-fluid px-4">
-      <a class="navbar-brand google-brand" href="#">
-        <span class="brand-icon">📚</span>
-        <span class="brand-text">GoogleIndex</span>
+
+      <!-- Brand -->
+      <a class="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" routerLink="/">
+        <span class="brand-icon fs-4">📄</span>
+        <span class="brand-text">Document Search Platform</span>
       </a>
 
-      <div class="ms-auto d-flex align-items-center gap-3">
-        <a class="nav-link" routerLink="/upload" routerLinkActive="active">📁 Upload</a>
-        <a class="nav-link" routerLink="/search" routerLinkActive="active">🔍 Search</a>
+      <!-- Navigation Links -->
+      <div class="ms-auto d-flex align-items-center gap-4">
+        <a class="nav-link text-white fw-medium" routerLink="/upload" routerLinkActive="active">
+          Upload Documents
+        </a>
+
+        <a class="nav-link text-white fw-medium" routerLink="/search" routerLinkActive="active">
+          Search Library
+        </a>
       </div>
+
     </div>
   </nav>
 
-  <main class="flex-grow-1 d-flex flex-column align-items-center justify-content-center">
+  <!-- Main Content -->
+  <main class="flex-grow-1 d-flex flex-column align-items-center justify-content-center w-100 px-3">
     <router-outlet></router-outlet>
   </main>
 
-  <footer class="w-100 py-4 mt-auto">
+  <!-- Footer -->
+  <footer class="w-100 py-4 mt-auto border-top bg-light">
     <div class="container text-center">
-      <p class="footer-text m-0">&copy; 2026 Inverted Index Engine</p>
+
+      <p class="footer-text mb-1 fw-medium">
+        © 2026 Document Search Platform
+      </p>
+
+      <small class="text-muted">
+        Intelligent Indexing & Search Engine
+      </small>
+
     </div>
   </footer>
 

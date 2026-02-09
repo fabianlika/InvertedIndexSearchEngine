@@ -12,4 +12,9 @@ export class SearchService {
   search(query: string) {
     return this.http.get(`${this.apiUrl}/search?q=${query}`);
   }
+
+  getDocument(id: number) {
+  return this.http.get<any>(`${this.apiUrl}/document/${id}`);
+}
+
 }

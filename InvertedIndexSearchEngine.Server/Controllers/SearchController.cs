@@ -90,5 +90,19 @@ namespace InvertedIndexSearchEngine.Controllers
                 return BadRequest($"File processing failed: {ex.Message}");
             }
         }
+
+        [HttpGet("document/{id}")]
+        public async Task<IActionResult> GetDocument(int id)
+        {
+            var doc = await _indexer.GetDocumentByIdAsync(id);
+
+            if (doc == null)
+                return NotFound("Document not found.");
+
+            return Ok(doc);
+        }
+
+
+
     }
 }

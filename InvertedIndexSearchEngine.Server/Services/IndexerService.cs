@@ -29,7 +29,10 @@ namespace InvertedIndexSearchEngine.Services
 
         public async Task AddDocumentAndIndex(string title, string content)
         {
-            // 1️⃣ Save Document
+            // ============================
+            // 1️⃣ SAVE DOCUMENT TO DATABASE
+            // ============================
+            // Store raw document text before indexing
             var doc = new DbDocument
             {
                 Title = title,
@@ -37,42 +40,70 @@ namespace InvertedIndexSearchEngine.Services
             };
 
             _context.Documents.Add(doc);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save to generate Document ID
 
-            // 2️⃣ MAP Phase — Tokenize & Normalize
-            var words = Regex.Replace(content.ToLower(), @"[^\w\s]", "")
-                .Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries)
-                .Where(w => !_stopWords.Contains(w))
+
+            // ==========================================
+            // 2️⃣ MAP PHASE — TOKENIZE & NORMALIZE TEXT
+            // ==========================================
+            // Map step transforms raw text into normalized tokens (words)
+
+            var words = Regex.Replace(content.ToLower(), @"[^\w\s]", "") // Remove punctuation
+                .Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries) // Split text into words
+                .Where(w => !_stopWords.Contains(w)) // Remove stopwords (e.g., "the", "and", "is")
                 .ToList();
 
-            // 3️⃣ REDUCE Phase — Count Term Frequencies
+            // Example output of MAP:
+            // Input: "Search engines index documents"
+            // Output: ["search", "engines", "index", "documents"]
+
+
+            // =====================================================
+            // 3️⃣ REDUCE PHASE — COUNT TERM FREQUENCY PER DOCUMENT
+            // =====================================================
+            // Reduce step aggregates mapped tokens into (term → frequency)
+
             var wordCounts = words
-                .GroupBy(w => w)
-                .Select(g => new { Word = g.Key, Count = g.Count() })
+                .GroupBy(w => w) // Group same words
+                .Select(g => new { Word = g.Key, Count = g.Count() }) // Count occurrences
                 .ToList();
 
+            // Example output of REDUCE:
+            // "index" → 3 times
+            // "search" → 1 time
+
+
+            // =====================================================
+            // 4️⃣ BUILD INVERTED INDEX ENTRIES
+            // =====================================================
             foreach (var item in wordCounts)
             {
+                // Check if term already exists in Terms table
                 var term = await _context.Terms
                     .FirstOrDefaultAsync(t => t.Word == item.Word);
 
+                // If term does not exist, create it
                 if (term == null)
                 {
                     term = new Term { Word = item.Word };
                     _context.Terms.Add(term);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(); // Save to generate Term ID
                 }
 
+                // Insert entry into Inverted Index table:
+                // Maps Term → Document + Frequency
                 _context.InvertedIndices.Add(new InvertedIndex
                 {
                     DocumentId = doc.Id,
                     TermId = term.Id,
-                    Frequency = item.Count
+                    Frequency = item.Count // TF = Term Frequency
                 });
             }
 
+            // Persist all inverted index entries
             await _context.SaveChangesAsync();
         }
+
 
         public async Task AddDocumentFromFile(string title, IFormFile file)
         {
